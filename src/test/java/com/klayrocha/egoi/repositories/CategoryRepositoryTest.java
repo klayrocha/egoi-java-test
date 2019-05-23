@@ -3,16 +3,12 @@ package com.klayrocha.egoi.repositories;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,14 +18,19 @@ import com.klayrocha.egoi.entity.Category;
 @SpringBootTest
 @ActiveProfiles("test")
 public class CategoryRepositoryTest {
-
+	
 	@Autowired
 	public CategoryRepository categoryRepository;
+	
+	private static boolean exec = true;
 
 	@Before
 	public void setUp() {
-		Category category = this.categoryRepository.save(getCategoryData());
-		saveSubCategories(category);
+		if(exec) {
+			Category category = this.categoryRepository.save(getCategoryData());
+			saveSubCategories(category);
+			exec = false;
+		}
 	}
 
 	private void saveSubCategories(Category category) {
@@ -49,19 +50,19 @@ public class CategoryRepositoryTest {
 
 	@Test
 	public void findAll() {
-		System.out.println("#########################  COMEÇOU #######################");
-		Pageable pages = PageRequest.of(0, 1);
-		Page<Category> categories = categoryRepository.findAll(pages);
-		List<Category> categoriesRet = categories.get().collect(Collectors.toList());
-		for (Category category : categoriesRet) {
-			System.out.println(category.getName());
-		}
-		assertEquals(1, categories.getTotalElements());
+		List<Category> categories = categoryRepository.findAll();
+		assertEquals(21,categories.size());
 	}
 
 	@Test
-	public void findByName() {
+	public void findByNameOneCategory() {
 		List<Category> categories = categoryRepository.findByName("Category Test");
-		assertEquals(2, categories.size());
+		assertEquals(1, categories.size());
+	}
+	
+	@Test
+	public void findByNameAllSubCategory() {
+		List<Category> categories = categoryRepository.findByName("%SubCategory%");
+		assertEquals(20, categories.size());
 	}
 }

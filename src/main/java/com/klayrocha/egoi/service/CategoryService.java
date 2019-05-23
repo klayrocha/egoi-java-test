@@ -3,7 +3,6 @@ package com.klayrocha.egoi.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.klayrocha.egoi.entity.Category;
@@ -17,7 +16,7 @@ import com.klayrocha.egoi.entity.Category;
 @Service
 public interface CategoryService {
 
-	Page<Category> findAll(int page, int count);
+	List<Category> findAll();
 
 	List<Category> findByName(String name);
 

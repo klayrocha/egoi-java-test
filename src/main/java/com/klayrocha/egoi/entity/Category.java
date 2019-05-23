@@ -1,8 +1,8 @@
 package com.klayrocha.egoi.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,13 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Fetch;
 
 /**
  * Class representing the model of an Category
@@ -38,11 +38,13 @@ public class Category {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = true, foreignKey = @ForeignKey(name = "fk_category_category"))
+	@Fetch(org.hibernate.annotations.FetchMode.JOIN)
 	private Category categoryId;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "category_id", updatable = false)
-	private Set<Category> subcategories = new HashSet<Category>();
+	@Fetch(org.hibernate.annotations.FetchMode.JOIN)
+	private List<Category> subcategories = new ArrayList<Category>();
 
 	@NotEmpty(message = "The field ‘name’ is mandatory")
 	@NotNull(message = "The field ‘name’ is mandatory")
@@ -73,11 +75,11 @@ public class Category {
 		this.categoryId = categoryId;
 	}
 
-	public Set<Category> getSubcategories() {
+	public List<Category> getSubcategories() {
 		return subcategories;
 	}
 
-	public void setSubcategories(Set<Category> subcategories) {
+	public void setSubcategories(List<Category> subcategories) {
 		this.subcategories = subcategories;
 	}
 
@@ -103,18 +105,6 @@ public class Category {
 
 	public void setModified(Date modified) {
 		this.modified = modified;
-	}
-
-	@PreUpdate
-	public void preUpdate() {
-		modified = new Date();
-	}
-
-	@PrePersist
-	public void prePersist() {
-		final Date current = new Date();
-		created = current;
-		modified = current;
 	}
 
 	@Override
@@ -171,4 +161,5 @@ public class Category {
 			return false;
 		return true;
 	}
+
 }
