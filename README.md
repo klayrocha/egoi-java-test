@@ -5,7 +5,7 @@ After the git clone, run the mvn clean install command.
 
 You can see the tests being run.
 
-Create the database called egoi
+Create the database in MySql called egoi
 
 Execute script called scriptBD.sql in the project's doc folder
 
