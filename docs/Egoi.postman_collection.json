@@ -1,0 +1,117 @@
+{
+	"id": "e7222c9a-125c-4393-bfef-00fcd5a3672a",
+	"name": "Egoi",
+	"description": null,
+	"auth": null,
+	"events": null,
+	"variables": null,
+	"order": [
+		"a2d96d98-e236-4e3a-be8b-3a93b6572733",
+		"7f26d254-e1de-420e-b383-7aad5f4abbfa",
+		"6783eb1d-5f64-4d5b-880f-5a492ab9a85d",
+		"c3f1297b-16bc-40b8-a02c-bd13b4bec739",
+		"e952cc3f-6573-41fe-82ca-5fe6eade0ffa"
+	],
+	"folders_order": [],
+	"folders": [],
+	"requests": [
+		{
+			"id": "6783eb1d-5f64-4d5b-880f-5a492ab9a85d",
+			"name": "FindById",
+			"url": "http://localhost:8080/api/category/5",
+			"description": null,
+			"data": [],
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		},
+		{
+			"id": "7f26d254-e1de-420e-b383-7aad5f4abbfa",
+			"name": "Save Category",
+			"url": "http://localhost:8080/api/category",
+			"description": null,
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": null
+				}
+			],
+			"method": "POST",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\n  \"name\" :  \"Teste Category\",\n  \"created\" : \"2019-05-23T08:22:32\",\n  \"modified\" : \"2019-05-23T08:22:32\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "a2d96d98-e236-4e3a-be8b-3a93b6572733",
+			"name": "Put Category",
+			"url": "http://localhost:8080/api/category",
+			"description": null,
+			"data": [],
+			"dataMode": "raw",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json"
+				}
+			],
+			"method": "PUT",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"rawModeData": "{\n  \"id\" : 1,\n  \"name\" :  \"Category Test Changed\",\n  \"created\" : \"2019-05-23T08:22:32\",\n  \"modified\" : \"2019-05-23T08:22:32\"\n}",
+			"headers": "Content-Type: application/json\n",
+			"pathVariables": {}
+		},
+		{
+			"id": "c3f1297b-16bc-40b8-a02c-bd13b4bec739",
+			"name": "Delete",
+			"url": "http://localhost:8080/api/category/11",
+			"description": null,
+			"data": [],
+			"dataMode": "params",
+			"headerData": [],
+			"method": "DELETE",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		},
+		{
+			"id": "e952cc3f-6573-41fe-82ca-5fe6eade0ffa",
+			"name": "FindAll",
+			"url": "http://localhost:8080/api/category/findByName/all",
+			"description": null,
+			"data": [],
+			"dataMode": "params",
+			"headerData": [],
+			"method": "GET",
+			"pathVariableData": [],
+			"queryParams": [],
+			"auth": null,
+			"events": null,
+			"folder": null,
+			"headers": "",
+			"pathVariables": {}
+		}
+	]
+}
