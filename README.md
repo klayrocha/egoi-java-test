@@ -9,11 +9,11 @@ Create the database in MySql called egoi
 
 Execute script called scriptBD.sql in the project's doc folder
 
-Then run "java -jar target/egoi-0.0.1-SNAPSHOT.jar"  command
-
 Change the database password in the application.properties file
 
 If you want to change the port other than 8080 is in the file application.properties property server.port
+
+Then run "java -jar target/egoi-0.0.1-SNAPSHOT.jar"  command
 
 After executing the commands, import the Egoi.postman_collection.json file from the doc folder in Postman to test the services.
 
