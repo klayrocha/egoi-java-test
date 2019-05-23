@@ -1,10 +1,10 @@
-	package com.klayrocha.egoi.controller;
+package com.klayrocha.egoi.controller;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +47,42 @@ public class CategoryController {
 	public CategoryController() {
 	}
 
+	@PostMapping()
+	public ResponseEntity<Response<CategoryDTO>> create(@Valid @RequestBody CategoryDTO categoryDTO,
+			BindingResult result) {
+		log.info("create : {}", categoryDTO.toString());
+		Response<CategoryDTO> response = new Response<CategoryDTO>();
+		validateCreate(categoryDTO, result);
+		if (result.hasErrors()) {
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			log.error("Erro create Category: {}", result.getAllErrors());
+			return ResponseEntity.badRequest().body(response);
+		}
+		response.setData(convertToCategoryDTO(categoryService.save(convertToCategory(categoryDTO))));
+		return ResponseEntity.ok(response);
+	}
+
+	@PutMapping
+	public ResponseEntity<Response<CategoryDTO>> update(@Valid @RequestBody CategoryDTO categoryDTO,
+			BindingResult result) {
+		log.info("update : {}", categoryDTO.toString());
+		Response<CategoryDTO> response = new Response<CategoryDTO>();
+		validateUpdate(categoryDTO, result);
+		if (result.hasErrors()) {
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			log.error("Error update Category: {}", result.getAllErrors());
+			return ResponseEntity.badRequest().body(response);
+		}
+		response.setData(convertToCategoryDTO(categoryService.save(convertToCategory(categoryDTO))));
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping(value = "/findByName/{name}")
 	public ResponseEntity<Response<List<CategoryDTO>>> findAll(@PathVariable("name") String name) {
+		log.info("findAll : {}", name);
 		Response<List<CategoryDTO>> response = new Response<List<CategoryDTO>>();
-		if(name.equals("all")) {
-			name =  "";
+		if (name.equals("all")) {
+			name = "";
 		}
 		List<Category> categories = categoryService.findByName(name);
 		response.setData(convertToListCategoryDTO(categories));
@@ -60,11 +91,11 @@ public class CategoryController {
 
 	@DeleteMapping(value = "{id}")
 	public ResponseEntity<Response<String>> delete(@PathVariable("id") Integer id) {
+		log.info("delete : {}", id);
 		Response<String> response = new Response<String>();
-		Optional<Category> optionalCategory = categoryService.findById(id);
-		if (!optionalCategory.isPresent()) {
-			log.error("Error findById Category not found");
-			response.getErrors().add("Category not found");
+		validateDelete(id, response);
+		if (response.getErrors() != null && response.getErrors().size() > 0) {
+			log.error("Error delete : {}", response.getErrors());
 			return ResponseEntity.badRequest().body(response);
 		}
 		categoryService.delete(id);
@@ -73,47 +104,64 @@ public class CategoryController {
 
 	@GetMapping(value = "{id}")
 	public ResponseEntity<Response<CategoryDTO>> findById(@PathVariable("id") Integer id) {
+		log.info("findById : {}", id);
 		Response<CategoryDTO> response = new Response<CategoryDTO>();
 		Optional<Category> optionalCategory = categoryService.findById(id);
 		if (!optionalCategory.isPresent()) {
-			log.error("Error findById Category not found");
 			response.getErrors().add("Category not found");
+			log.error("Error findById : {}", "Category not found");
 			return ResponseEntity.badRequest().body(response);
 		}
 		response.setData(convertToCategoryDTO(optionalCategory.get()));
 		return ResponseEntity.ok(response);
 	}
 
-	@PostMapping()
-	public ResponseEntity<Response<CategoryDTO>> create(HttpServletRequest request,
-			@RequestBody CategoryDTO categoryDTO) {
-		Response<CategoryDTO> response = new Response<CategoryDTO>();
-		log.info("Saving : {}", categoryDTO.toString());
-		response.setData(convertToCategoryDTO(categoryService.save(convertToCategory(categoryDTO))));
-		return ResponseEntity.ok(response);
+	private void validateCreate(CategoryDTO categoryDTO, BindingResult result) {
+		if (categoryDTO.getCategory_id() != null) {
+			Optional<Category> optionalSubCategory = categoryService.findById(categoryDTO.getCategory_id());
+			if (!optionalSubCategory.isPresent()) {
+				result.addError(new ObjectError("SubCategory", "SubCategory not found"));
+				log.error("Error create: {}", result.getAllErrors());
+				return;
+			}
+		}
 	}
 
-	@PutMapping
-	public ResponseEntity<Response<CategoryDTO>> update(HttpServletRequest request,
-			@RequestBody CategoryDTO categoryDTO, BindingResult result) {
-		Response<CategoryDTO> response = new Response<CategoryDTO>();
-		log.info("Saving : {}", categoryDTO.toString());
+	private void validateUpdate(CategoryDTO categoryDTO, BindingResult result) {
 		if (categoryDTO.getId() == null) {
-			log.error("Error id invalid: {}", result.getAllErrors());
-			response.getErrors().add("Error id is mandatory");
-			return ResponseEntity.badRequest().body(response);
+			result.addError(new ObjectError("id", "Error 'id' is mandatory"));
+			log.error("Error update: {}", result.getAllErrors());
+			return;
 		}
 		Optional<Category> optionalCategory = categoryService.findById(categoryDTO.getId());
 		if (!optionalCategory.isPresent()) {
 			result.addError(new ObjectError("Category", "Category not found"));
+			log.error("Error update: {}", result.getAllErrors());
+			return;
 		}
-		if (result.hasErrors()) {
-			log.error("Error update Category: {}", result.getAllErrors());
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
+		if (categoryDTO.getCategory_id() != null) {
+			Optional<Category> optionalSubCategory = categoryService.findById(categoryDTO.getCategory_id());
+			if (!optionalSubCategory.isPresent()) {
+				result.addError(new ObjectError("SubCategory", "SubCategory not found"));
+				log.error("Error update: {}", result.getAllErrors());
+				return;
+			}
 		}
-		response.setData(convertToCategoryDTO(categoryService.save(convertToCategory(categoryDTO))));
-		return ResponseEntity.ok(response);
+	}
+
+	private void validateDelete(Integer id, Response<String> response) {
+		Optional<Category> optionalCategory = categoryService.findById(id);
+		if (!optionalCategory.isPresent()) {
+			response.getErrors().add("Category not found");
+			log.error("Error delete: {}", "Category not found");
+			return;
+		}
+		if (optionalCategory.get().getSubcategories() != null && optionalCategory.get().getSubcategories().size() > 0) {
+			response.getErrors().add("This category has subcategories linked");
+			log.error("Error delete: {}", "This category has subcategories linked");
+			return;
+		}
+
 	}
 
 	private Category convertToCategory(CategoryDTO categoryDTO) {

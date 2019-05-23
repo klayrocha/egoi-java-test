@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.klayrocha.egoi.entity.Category;
@@ -26,12 +28,14 @@ public class CategoryServiceImpl implements CategoryService {
 	private CategoryRepository categoryRepository;
 
 	@Override
+	@CachePut("findByIdCategory")
 	public Category save(Category category) {
 		log.info("Saving the category: {}", category);
 		return this.categoryRepository.save(category);
 	}
 
 	@Override
+	@Cacheable("findByIdCategory")
 	public Optional<Category> findById(Integer id) {
 		log.info("Find the Category by ID {}", id);
 		return this.categoryRepository.findById(id);
@@ -45,14 +49,8 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<Category> findAll() {
-		log.info("Find All ");
-		return categoryRepository.findAll();
-	}
-
-	@Override
 	public List<Category> findByName(String name) {
 		log.info("Find the Category by name {}", name);
-		return categoryRepository.findByName("%"+name+"%");
+		return categoryRepository.findByName("%" + name + "%");
 	}
 }

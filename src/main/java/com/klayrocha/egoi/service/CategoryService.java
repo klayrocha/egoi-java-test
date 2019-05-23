@@ -16,8 +16,6 @@ import com.klayrocha.egoi.entity.Category;
 @Service
 public interface CategoryService {
 
-	List<Category> findAll();
-
 	List<Category> findByName(String name);
 
 	Category save(Category category);

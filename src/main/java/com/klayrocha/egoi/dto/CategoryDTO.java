@@ -19,15 +19,13 @@ public class CategoryDTO {
 
 	private Integer category_id;
 
-	@NotEmpty(message = "The field ‘name’ is mandatory")
+	@NotEmpty(message = "The field ‘name’ can not be empty")
 	@NotNull(message = "The field ‘name’ is mandatory")
 	private String name;
 
-	@NotEmpty(message = "The field ‘created’ is mandatory")
 	@NotNull(message = "The field ‘created’ is mandatory")
 	private Date created;
 
-	@NotEmpty(message = "The field ‘modified’ is mandatory")
 	@NotNull(message = "The field ‘modified’ is mandatory")
 	private Date modified;
 

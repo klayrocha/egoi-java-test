@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -17,8 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Fetch;
 
@@ -38,7 +37,6 @@ public class Category {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = true, foreignKey = @ForeignKey(name = "fk_category_category"))
-	@Fetch(org.hibernate.annotations.FetchMode.JOIN)
 	private Category categoryId;
 
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -46,13 +44,14 @@ public class Category {
 	@Fetch(org.hibernate.annotations.FetchMode.JOIN)
 	private List<Category> subcategories = new ArrayList<Category>();
 
-	@NotEmpty(message = "The field ‘name’ is mandatory")
-	@NotNull(message = "The field ‘name’ is mandatory")
+	@Column(nullable = false)
 	private String name;
 
+	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
 
+	@Column(nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modified;
 
