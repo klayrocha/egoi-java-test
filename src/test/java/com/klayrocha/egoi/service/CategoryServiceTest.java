@@ -17,6 +17,7 @@ public class CategoryServiceTest extends EgoiApplicationTests {
 	@Test
 	public void saveCategory() {
 		Category category = CategoryBuilder.oneCategory().now();
+		category.setName("Test Method save Seervice");
 		Category categoryDB = categoryService.save(category);
 		assertNotNull(categoryDB.getId());
 	}
